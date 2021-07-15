@@ -2,10 +2,8 @@ import { autoUpdater } from 'electron-updater';
 import { app, ipcMain as ipc, globalShortcut, shell, clipboard } from 'electron';
 import _ from 'lodash';
 import currentProcesses from 'current-processes';
-
 import { v4 } from 'uuid';
 import { version } from '../../package.json';
-
 import UserSession from './helpers/user-session';
 import autoSolve from './harvester/autosolve';
 import BrowserManager from './managers/browser-task-manager';
