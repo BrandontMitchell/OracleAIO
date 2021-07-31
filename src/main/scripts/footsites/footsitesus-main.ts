@@ -3,9 +3,11 @@ import { uuid } from 'uuidv4';
 import MainBot from '../main-classes/main-bot';
 import { ITaskData, IProfile } from '../../interfaces/index';
 var got = require('got');
+var tunnel = require('tunnel') ;
 import taskStatus from '../../helpers/task-status';
 import taskColors from '../../helpers/task-colors';
 import adyenGenerator, * as adyen from '../../helpers/adyenGenerator';
+import { stat } from 'original-fs';
 
 class FootsitesUS extends MainBot {
   profile: IProfile;
@@ -68,40 +70,26 @@ class FootsitesUS extends MainBot {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36',
       },
     }
-    const {body} = await got(`https://${this.site}/product/~/${this.taskData.monitorInput}.html`, options).json()
-    console.log(body)
-    // got(, {
-      
-    // });
-    // const options = await got({
-    //   method: 'GET',
-    //   uri: ,
-      
-    //   jar: this.jar,
-    //   proxy: this.currentProxy,
-    // });
-    // console.log(options);
-    // const { statusCode, body } = got.get(options);
-    // console.log(body);
-    // console.log(statusCode)
-    // if (statusCode === 503) {
-    //   this.log('info', this.taskData.id, 'Waiting in queue');
-    //   this.sendStatus(taskStatus.queue, taskColors.orange);
-    //   await this.pause(this.taskData.retryDelay);
-    //   await this.pollQueue();
-    // } else if (statusCode !== 200) {
-    //   await this.handleError(this.pollQueue, null, statusCode, body, false, null);
-    // }
+    const {statusCode, statusMessage, body} = await got(`https://${this.site}/product/~/${this.taskData.monitorInput}.html`, options)
+    
+    if (statusCode == 503) {
+      this.log('info', this.taskData.id, 'Waiting in queue');
+      this.sendStatus(taskStatus.queue, taskColors.orange);
+      await this.pause(this.taskData.retryDelay);
+      await this.pollQueue();
+    }
+    else if (statusCode !== 200) {
+      await this.handleError(this.pollQueue, null, statusCode, body, false, null);
+    }
     this.log('info', this.taskData.id, 'Passed queue');
-    // await this.generateSession();
+    await this.generateSession();
   }
+  
   async generateSession(): Promise<void> {
     if (this.stopped) return;
     this.sendStatus('Generating Session', taskColors.yellow, this.foundProduct.name);
     this.log('info', this.taskData.id, 'Generating Session');
     const options = {
-      method: 'GET',
-      uri: `https://${this.site}/api/v3/session?timestamp=${Date.now()}`,
       headers: {
         Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
         'Accept-Language': 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7,de;q=0.6',
@@ -114,11 +102,13 @@ class FootsitesUS extends MainBot {
         'Upgrade-Insecure-Requests': '1',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36',
       },
-      jar: this.jar,
-      proxy: this.currentProxy,
-    };
-    const { statusCode, body } = await rp(options);
+    }
+    const {statusCode, statusMessage, body} = await got(`https://${this.site}/api/session?timestamp=${Date.now()}`, options)
 
+    if (statusCode == 403) {
+      // TODO (Brandon): add datadome solving
+      this.log('info', this.taskData.id, 'Hit Datadome');
+    }
     if (statusCode !== 200) {
       await this.handleError(this.generateSession, null, statusCode, body);
       return;
@@ -136,8 +126,6 @@ class FootsitesUS extends MainBot {
     this.sendStatus('Getting stock', taskColors.yellow, this.foundProduct.name);
     this.log('info', this.taskData.id, 'Getting stock');
     const options = {
-      method: 'GET',
-      uri: `https://${this.site}/api/products/pdp/${this.taskData.monitorInput}?timestamp=${Date.now()}`,
       headers: {
         Accept: 'application/json',
         'Accept-Language': 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7,de;q=0.6',
@@ -150,10 +138,8 @@ class FootsitesUS extends MainBot {
         'Upgrade-Insecure-Requests': '1',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36',
       },
-      jar: this.jar,
-      proxy: this.currentProxy,
     };
-    const { statusCode, body } = await rp(options);
+    const { statusCode, body } = await got(`https://${this.site}/api/products/pdp/${this.taskData.monitorInput}?timestamp=${Date.now()}`, options);
 
     if (statusCode !== 200) {
       await this.handleError(this.getStock, null, statusCode, body);
@@ -183,16 +169,11 @@ class FootsitesUS extends MainBot {
   }
   async addToCart(): Promise<void> {
     if (this.stopped) return;
-    if (this.taskData.mode === 'api') {
-      await this.genAkamai();
-      await this.GenDatadome();
-    }
+
     this.log('info', this.taskData.id, 'Adding to cart');
     this.sendStatus(taskStatus.carting, taskColors.yellow, this.foundProduct.name);
     const options = {
-      method: 'POST',
       body: `{"productQuantity":1,"productId":"${this.foundProduct.variant}"}`,
-      uri: `https://${this.site}/api/users/carts/current/entries?timestamp=${Date.now()}`,
       headers: {
         Accept: 'application/json',
         'Accept-Language': 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7,de;q=0.6',
@@ -211,14 +192,21 @@ class FootsitesUS extends MainBot {
         'x-fl-productid': this.foundProduct.variant,
         'x-fl-request-id': uuid(),
       },
-      jar: this.jar,
-      proxy: this.currentProxy,
     };
-    const { statusCode, body } = await rp(options);
-
-    if (statusCode !== 200) {
-      await this.handleError(this.addToCart, null, statusCode, body, false, 20000);
+    const { statusCode, body } = await got.post(`https://${this.site}/api/users/carts/current/entries?timestamp=${Date.now()}`, options);
+    console.log("ASDfasdfasdfsadf")
+    if (statusCode == 429) {
+      this.sendStatus('Rate Limited', taskColors.red, this.foundProduct.name);
+      await this.handleError(this.addToCart, null, statusCode, body, false, 3333);
       return;
+    }
+    if (statusCode == 403) {
+      this.sendStatus('Datadome hit', taskColors.red, this.foundProduct.name);
+      await this.handleDatadome(body, this.addToCart);
+      return;
+    }
+    else if (statusCode !== 200) {
+      await this.handleError(this.addToCart, null, statusCode, body, false, 3333);
     }
     this.log('info', this.taskData.id, 'Added to cart');
     const cartData = JSON.parse(body);
