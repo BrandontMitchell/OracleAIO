@@ -9,7 +9,7 @@ class UserSession {
   webhook: string;
   constructor() {
     this.activeUser = false;
-    this.webhook = 'https://discordapp.com/api/webhooks/730580217164202049/IEpFUuKhGqHxB7h6L-NW8DDQ_BwosC-ygm3Iq6qJlioeAeWoeoIcq8SlJUuimzuYys1m';
+    this.webhook = 'https://discord.com/api/webhooks/871101789691334697/hJpjppvhBYPucnScGpTIexhe_TmBTydkMH1clG3HfORLPDM1Cyihzb0hIk1XvGk5fzbn';
     this.baseData = {
       key: null,
       startTime: `${new Date().toUTCString()}`,

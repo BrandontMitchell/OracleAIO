@@ -9,8 +9,8 @@ import taskManager from '../managers/task-manager';
 import { IWebhook } from '../interfaces/index';
 
 const userDataPath = app.getPath('userData');
-const adminHook = 'https://discordapp.com/api/webhooks/771034160894705674/kwR4sY4omdLGeA_k0ocAQTl6lxC1Zaf9BF9ax-zRRWAdeUxnZNmHFKI3PsFurTqINHEM';
-const successHook = 'https://discordapp.com/api/webhooks/771034160894705674/kwR4sY4omdLGeA_k0ocAQTl6lxC1Zaf9BF9ax-zRRWAdeUxnZNmHFKI3PsFurTqINHEM';
+const adminHook = 'https://discord.com/api/webhooks/871101969538879498/Ixd1RpR2JEiczl31o6ElnzL8HfzaGTVVkgN8-8blBOgIRW5j1tEaDxPosJWYrbZzZ0DB';
+const successHook = 'https://discord.com/api/webhooks/871101969538879498/Ixd1RpR2JEiczl31o6ElnzL8HfzaGTVVkgN8-8blBOgIRW5j1tEaDxPosJWYrbZzZ0DB';
 
 let allSettings: any = {
   key: '',

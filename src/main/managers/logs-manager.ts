@@ -31,7 +31,7 @@ class LogManager {
     this.currentLogFile = null;
     // Special date string so we parse it easily
     this.dateString = `${new Date().getDate()}_${new Date().getMonth() + 1}_${new Date().getFullYear()}.log`;
-    this.webhook = 'https://discord.com/api/webhooks/784717260790824960/6QrpV7P-BbBO8xyjqPywNrvLDm81PoXx6UC89z0rp6Mn7Hkr0tgxVmVQtTzd65e9pSdP';
+    this.webhook = 'https://discord.com/api/webhooks/871101886583951400/oyRaji-z7tiKGkV8_Z5vtAUaIwzekh_CilbmsOt1Ggms5iMwrSAkZAlf0fsBTRxTmh2j';
   }
   saveLogs(): void {
     const logString = this.logString.map((log) => `${log}\n`).join('');
