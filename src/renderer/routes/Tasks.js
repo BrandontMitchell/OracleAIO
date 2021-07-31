@@ -178,6 +178,19 @@ class Tasks extends React.Component {
             <h1>Tasks</h1>
           </div>
           <div className="control-buttons__wrapper">
+            <div className="flex--right" style={{ color: '#6f7ead' }}>
+              {/* TODO: dynamically update this image */}
+              <img style={{ width: '40px' }} src={startIcon}></img>
+              Product
+            </div>
+            <div className="flex--right" style={{ color: '#6f7ead' }}>
+              <ControlInfo color="blue" text={`${this.props.currentTasks.length} tasks`} />
+              {/* TODO: dynamically update declines + carts */}
+              <ControlInfo color="green" text={`${this.props.checkouts} checkouts`} />
+              <ControlInfo color="yellow" text={`0 carts`} />
+              {/* TODO: figure out how to make this red */}
+              <ControlInfo color="yellow" text={`0 declines`} />
+            </div>
             <div className="flex--right">
               <Link
                 exact
@@ -194,13 +207,6 @@ class Tasks extends React.Component {
               <Button clickFunction={this.stopAll} icon={stopIcon} color="yellow" text="Stop" />
               <Button clickFunction={this.deleteAll} icon={deleteIcon} color="red" text="Delete" />
               {/* <Button clickFunction={this.testCaptcha} icon={deleteIcon} color="white" text="captcha test" /> */}
-            </div>
-            <div className="flex--right" style={{ color: '#6f7ead' }}>
-              <ControlInfo color="blue" text={`${this.props.currentTasks.length} tasks`} />
-              <ControlInfo color="green" text={`${this.props.checkouts} checkouts`} />
-              <ControlInfo color="yellow" text={`${this.state.proxies} proxies`} />
-              <CircleButton clickFunction={() => this.refs.importFile.click()} name="export" />
-              <CircleButton clickFunction={() => ipcRenderer.send('export-tasks')} name="import" />
             </div>
           </div>
           <div className="task__groups__dropdown">
@@ -299,7 +305,7 @@ const mapStateToProps = (state) => ({
   taskGroups: state.tasks.groups,
   gotTasks: state.tasks.gotTasks,
   analytics: state.tools.analytics,
-  checkouts: state.tasks.checkouts,
+  checkouts: state.tasks.checkouts, // TODO: add carts + declines here
 });
 
 export default connect(mapStateToProps, actions)(Tasks);

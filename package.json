@@ -141,6 +141,7 @@
     "underscore": "^1.9.2",
     "uuid": "^7.0.1",
     "uuidv4": "^6.2.4",
-    "webhook-discord": "^3.5.1"
+    "webhook-discord": "^3.5.1",
+    "yarn": "^1.22.11"
   }
 }
