@@ -11,14 +11,14 @@
 /* eslint-disable import/no-unresolved */
 import _ from 'underscore';
 import Tough from 'tough-cookie';
-import MainBot from '../../main-classes/main-bot';
+import MainBot from '../../../main-classes/main-bot';
 import Cheerio from 'cheerio';
 
-import taskStatus from '../../../helpers/task-status';
-import taskColors from '../../../helpers/task-colors';
+import taskStatus from '../../../../helpers/task-status';
+import taskColors from '../../../../helpers/task-colors';
 
 import SnipesRequests from './snipes-requests';
-import { ITaskData, IProfile } from '../../../interfaces/index';
+import { ITaskData, IProfile } from '../../../../interfaces/index';
 
 const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 

@@ -1,9 +1,9 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/extensions */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import MainRequests from '../../main-classes/main-request';
+import MainRequests from '../../../main-classes/main-request';
 
-import { ITaskData } from '../../../interfaces/index';
+import { ITaskData } from '../../../../interfaces/index';
 
 class SnipesRequests extends MainRequests {
   taskData: ITaskData;

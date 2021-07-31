@@ -2,8 +2,8 @@ import path from 'path';
 import moment from 'moment';
 import { BrowserWindow, session } from 'electron';
 
-import { ITaskData, IProfile } from '../../interfaces/index';
-import MainBot from '../main-classes/main-bot';
+import { ITaskData, IProfile } from '../../../interfaces/index';
+import MainBot from '../../main-classes/main-bot';
 
 import { CHROME_VERSIONS } from './constants';
 import utils from './utils';
